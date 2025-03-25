@@ -13,11 +13,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const html = await fetchHTML(url);
     const { title, text, image } = parseContent(html, url);
     const tags = await generateTags(`
-        Article Title: ${title}
-
-        Article Text: ${text}
-        `
-    )
+      Article Title: ${title.trim()}
+      Article Text: ${text.trim()}
+    `);
+    
 
     const embedding = await generateEmbeddings(
         `
