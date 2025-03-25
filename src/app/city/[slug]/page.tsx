@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { ArticleCard } from "@/components/articleCard";
 
 type City = {
   id: string;
@@ -25,15 +26,14 @@ export default async function CityPage(promise: {
     return <div className="p-6 text-red-500">City not found.</div>;
   }
 
-
   const { data: articles, error: articlesError } = await supabase
     .from("articles")
     .select("*")
     .eq("city_id", city.id);
-  
-    if (articlesError) {
-      return <div className="p-6 text-red-500">Error fetching articles.</div>;
-    }
+
+  if (articlesError) {
+    return <div className="p-6 text-red-500">Error fetching articles.</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -46,9 +46,15 @@ export default async function CityPage(promise: {
       )}
       <div className="p-6">
         <h1 className="text-4xl font-bold">{city.name}</h1>
-        <p className="text-muted-foreground text-lg">{city.description}</p>
+        <p className="text-muted-foreground text-lg pt-2">{city.description}</p>
         <div className="mt-10 text-sm text-muted-foreground italic">
-          Articles coming soon...
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {articles.map((article, i) => (
+                <ArticleCard key={i} article={article} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
