@@ -1,37 +1,29 @@
-import { createClient } from "@/utils/supabase/server";
 import { ArticleCard } from "@/components/articleCard";
+import { Article } from "@/types";
+import { headers } from "next/headers";
 
-type City = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  image_url: string;
-};
-
-export default async function CityPage(promise: {
-  params: Promise<{ slug: string }>;
+export default async function CityPage({
+  params,
+}: {
+  params: { slug: string };
 }) {
-  const { slug } = await promise.params; // ✅ unwrap the slug here
 
-  const supabase = await createClient();
+  const slug = params.slug;
 
-  const { data: city, error: cityError } = await supabase
-    .from("cities")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+  const host = (await headers()).get("host");
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 
-  if (cityError || !city) {
+  const city_res = await fetch(`${protocol}://${host}/api/city?slug=${slug}`);
+  const city = await city_res.json();
+
+  if (!city_res.ok) {
     return <div className="p-6 text-red-500">City not found.</div>;
   }
 
-  const { data: articles, error: articlesError } = await supabase
-    .from("articles")
-    .select("*")
-    .eq("city_id", city.id);
+  const articles_res = await fetch(`${protocol}://${host}/api/articles?city_id=${city.id}`);
+  const articles: Article[] = await articles_res.json();
 
-  if (articlesError) {
+  if (!articles_res.ok) {
     return <div className="p-6 text-red-500">Error fetching articles.</div>;
   }
 

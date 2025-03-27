@@ -16,16 +16,19 @@ export default function ArticlesPage() {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const supabase = createClient();
+      try {
+        const res = await fetch("/api/articles");
+        const data = await res.json();
 
-      const { data: articles, error: error } = await supabase
-        .from("articles")
-        .select("*");
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch articles");
+        }
 
-      if (!error && articles) {
-        setResults(articles);
+        setResults(data);
+      } catch (err: any) {
       }
     };
+
     fetchArticles();
   }, []);
 
