@@ -5,7 +5,6 @@ export interface Article {
     image_url: string;
     description: string;
     tags: string[];
-    embedding: number[];
     city_id: string;
     user_id: string;
     createdAt: string;
