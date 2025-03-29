@@ -54,7 +54,12 @@ export function SearchDropdown({
         const response = await fetch("/api/cities");
         const data = await response.json();
         if (!response.ok) throw new Error("Failed to fetch cities");
-        setCities(data.map((city: { name: string, slug: string }) => [city.name, city.slug]));
+        setCities(
+          data.map((city: { name: string; slug: string }) => [
+            city.name,
+            city.slug,
+          ])
+        );
       } catch (err) {
         setCities([]);
       }
@@ -119,13 +124,20 @@ export function SearchDropdown({
           {cities.map((city) => (
             <DropdownMenuItem
               key={city[1]}
-              onClick={() => setSelectedCity(city[1])}
+              onClick={() => {
+                if (selectedCity != city[1]){
+                    setSelectedCity(city[1]);
+                }
+                else{
+                    setSelectedCity("");
+                }
+              }}
               className="flex items-center px-3 py-2 rounded-lg transition-all duration-150 hover:bg-[#F4E8D4] dark:hover:bg-gray-700"
             >
               <Check
                 className={`mr-2 h-4 w-4 ${
                   selectedCity === city[1]
-                    ? "opacity-100 text-transparent bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#7B61FF]"
+                    ? "opacity-100  bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#7B61FF]"
                     : "opacity-0"
                 }`}
               />
@@ -148,7 +160,7 @@ export function SearchDropdown({
               <Check
                 className={`mr-2 h-4 w-4 ${
                   selectedSort === sort
-                    ? "opacity-100 text-transparent bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#7B61FF]"
+                    ? "opacity-100 bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#7B61FF]"
                     : "opacity-0"
                 }`}
               />
