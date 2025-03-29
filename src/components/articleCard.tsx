@@ -15,7 +15,7 @@ export function ArticleCard({ article }: { article: Article }) {
         <div className="relative w-full max-w-sm h-64 overflow-hidden rounded-2xl shadow-lg transition transform hover:scale-105 cursor-pointer">
           <img
             src={article.image_url}
-            alt={article.title}
+            alt="Article image"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute bottom-0 left-0 w-full flex justify-between items-center bg-gradient-to-t from-black/70 to-transparent text-white px-4 py-2">

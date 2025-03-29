@@ -111,6 +111,7 @@ export default function ArticlesPage() {
   return (
     <div className="max-w-screen-xl mx-auto py-8">
       {/* Page heading */}
+      <img src="/logo.svg" className="h-20"></img>
       <h1 className="text-3xl font-bold mb-2">Discover Articles</h1>
       <p className="text-gray-600 mb-6">
         Explore guides, hidden gems, and more from around the world.
