@@ -69,6 +69,7 @@ export default function ArticlesPage() {
         // Tags
         if (filters.tags.length) {
           params.append("primary_tags", filters.tags.join(","));
+
         }
 
         // Sort

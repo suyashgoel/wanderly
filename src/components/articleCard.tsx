@@ -40,6 +40,35 @@ export function ArticleCard({ article }: { article: Article }) {
           </div>
         </div>
       </DialogTrigger>
+
+      <DialogContent className="max-w-lg p-6 rounded-2xl shadow-xl bg-white dark:bg-[#222529] transition-colors">
+         <DialogHeader>
+           <DialogTitle className="text-2xl font-bold font-inter text-[#0077FF] dark:text-[#7B61FF]">
+             {article.title}
+           </DialogTitle>
+         </DialogHeader>
+         <a
+           href={article.url}
+           target="_blank"
+           rel="noopener noreferrer"
+           className="text-sm underline font-medium text-[#0077FF] dark:text-[#FF7A00] mb-3 block"
+         >
+           {article.url}
+         </a>
+         <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 font-light">
+           {article.description}
+         </p>
+         <div className="flex flex-wrap gap-2">
+           {article.secondary_tags.map((tag, i) => (
+             <span
+               key={i}
+               className="text-xs font-semibold text-white px-2 py-1 rounded-full bg-gradient-to-r from-[#0077FF] to-[#7B61FF] shadow-md"
+             >
+               #{tag}
+             </span>
+           ))}
+         </div>
+       </DialogContent>
     </Dialog>
   );
 }

@@ -40,8 +40,8 @@ export function SearchDropdown({
         if (!response.ok) throw new Error("Failed to fetch tags");
         setTags(
           data.map(
-            (tag: { name: string }) =>
-              tag.name[0].toUpperCase() + tag.name.substring(1)
+            (tag: { id: number, name: string }) =>
+              [tag.id, tag.name[0].toUpperCase() + tag.name.substring(1)]
           )
         );
       } catch (err) {
@@ -100,18 +100,18 @@ export function SearchDropdown({
           </DropdownMenuLabel>
           {tags.map((tag) => (
             <DropdownMenuItem
-              key={tag}
-              onClick={() => toggleTag(tag)}
+              key={tag[0]}
+              onClick={() => toggleTag(tag[0])}
               className="flex items-center px-3 py-2 rounded-lg transition-all duration-150 hover:bg-[#F4E8D4] dark:hover:bg-gray-700"
             >
               <Check
                 className={`mr-2 h-4 w-4 ${
-                  selectedTags.includes(tag)
-                    ? "opacity-100 text-transparent bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#7B61FF]"
+                  selectedTags.includes(tag[0])
+                    ? "opacity-100 bg-clip-text bg-gradient-to-r from-[#0077FF] to-[#7B61FF]"
                     : "opacity-0"
                 }`}
               />
-              {tag}
+              {tag[1]}
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>

@@ -1,15 +1,34 @@
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 
+export type ParsedContent = {
+  success: boolean;
+  title: string;
+  text: string;
+  image: string;
+  error?: string;
+};
+
 export function parseContent(
   html: string,
   url: string
 ): { title: string; text: string; image: string } {
+  
   const dom = new JSDOM(html, { url });
   const doc = dom.window.document;
 
   const reader = new Readability(doc);
   const article = reader.parse();
+
+  if (!article || !article.textContent?.trim()) {
+    return {
+      success: false,
+      title: "",
+      text: "",
+      image: "",
+      error: "Failed to extract readable content from the page.",
+    } as ParsedContent;
+  }
 
   const title = article?.title || doc.title || "Untitled";
   const text = (article?.textContent || "").replace(/\s+/g, ' ').trim();
@@ -25,9 +44,7 @@ export function parseContent(
     (doc.querySelector("article img") as HTMLImageElement | null)?.src ||
     (doc.querySelector("img") as HTMLImageElement | null)?.src;
 
-  const fallback = "https://i.scdn.co/image/ab67616d0000b27340785d18b8695438070d83b1";
-
-  const image = ogImage || pageImage || fallback;
+  const image = ogImage || pageImage || "";
 
   return {
     title: title,
