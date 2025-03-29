@@ -1,15 +1,14 @@
 "use client";
 
-import { ArticleCard } from "@/components/articleCard";
-import { Input } from "@/components/ui/input";
-import { Article } from "@/types";
 import { useState, useEffect } from "react";
+import { ArticleCard } from "@/components/articleCard";
+import { SearchBar } from "@/components/searchBar";
 import { SearchDropdown } from "@/components/searchDropdown";
+import { Article } from "@/types";
 
 export default function ArticlesPage() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-
   const [filters, setFilters] = useState<{
     tags: string[];
     city: string | null;
@@ -19,9 +18,9 @@ export default function ArticlesPage() {
     city: null,
     sort: null,
   });
-
   const [results, setResults] = useState<Article[]>([]);
 
+  // Debounce the query to reduce unnecessary fetches
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
@@ -29,6 +28,7 @@ export default function ArticlesPage() {
     return () => clearTimeout(handler);
   }, [query]);
 
+  // Initial fetch of all articles (optional: you could remove if you only want data after user input)
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -40,26 +40,38 @@ export default function ArticlesPage() {
         }
 
         setResults(data);
-      } catch (err: any) {}
+      } catch (err: any) {
+        console.error("Error fetching articles:", err);
+      }
     };
 
     fetchArticles();
   }, []);
 
+  // Fetch articles when query or filters change
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         const params = new URLSearchParams();
 
-        if (debouncedQuery) params.append("query", debouncedQuery);
+        // Query
+        if (debouncedQuery) {
+          params.append("query", debouncedQuery);
+        }
+
+        // City
         if (filters.city) {
           const response = await fetch(`/api/city?slug=${filters.city}`);
           const data = await response.json();
           if (response.ok) params.append("city_id", data.id);
         }
 
-        if (filters.tags.length)
+        // Tags
+        if (filters.tags.length) {
           params.append("primary_tags", filters.tags.join(","));
+        }
+
+        // Sort
         if (filters.sort) {
           type SortKey =
             | "A → Z (Alphabetical)"
@@ -73,6 +85,7 @@ export default function ArticlesPage() {
             "Newest First": "newest",
             "Oldest First": "oldest",
           };
+
           params.append(
             "sort",
             sortOptions[filters.sort as SortKey] || "date_desc"
@@ -82,8 +95,9 @@ export default function ArticlesPage() {
         const response = await fetch(`/api/articles?${params.toString()}`);
         const data = await response.json();
 
-        if (!response.ok)
+        if (!response.ok) {
           throw new Error(data.error || "Failed to fetch articles");
+        }
 
         setResults(data);
       } catch (error) {
@@ -92,30 +106,32 @@ export default function ArticlesPage() {
     };
 
     fetchArticles();
-  }, [query, filters]);
+  }, [debouncedQuery, filters]);
 
   return (
-    <div className="space-y-6">
-      <div className="p-6">
-        <div className="flex justify-between">
-          <Input
-            type="text"
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <SearchDropdown onFiltersChange={setFilters} />
-        </div>
-        <div className="mt-10 text-sm text-muted-foreground italic">
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {results.map((result, i) => (
-                <ArticleCard key={i} article={result} />
-              ))}
-            </div>
-          </div>
-        </div>
+    <div className="max-w-screen-xl mx-auto py-8">
+      {/* Page heading */}
+      <h1 className="text-3xl font-bold mb-2">Discover Articles</h1>
+      <p className="text-gray-600 mb-6">
+        Explore guides, hidden gems, and more from around the world.
+      </p>
+
+      {/* Top controls (search & filters) */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+        <SearchBar onQueryChange={setQuery} />
+        <SearchDropdown onFiltersChange={setFilters} />
       </div>
+
+      {/* Articles grid or no-results message */}
+      {results.length === 0 ? (
+        <p className="text-center text-gray-500">No articles found.</p>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {results.map((article, i) => (
+            <ArticleCard key={i} article={article} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
