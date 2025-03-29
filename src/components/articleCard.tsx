@@ -46,7 +46,7 @@ export function ArticleCard({ article }: { article: Article }) {
           {article.description}
         </p>
         <div className="flex flex-wrap gap-2">
-          {article.tags.map((tag, i) => (
+          {article.secondary_tags.map((tag, i) => (
             <span
               key={i}
               className="bg-gray-200 text-xs text-gray-800 px-2 py-1 rounded-full"

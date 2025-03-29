@@ -13,13 +13,13 @@ export async function GET(req: NextRequest) {
 
   const cityIds = searchParams.get("city_id");
   const sort = searchParams.get("sort");
-  const tags = searchParams.get("tags");
+  const tags = searchParams.get("primary_tags");
   const searchQuery = searchParams.get("query");
 
   let query = supabase
     .from("articles")
     .select(
-      "id, url, title, image_url, description, tags, city_id, user_id, created_at"
+      "id, url, title, image_url, description, secondary_tags, city_id, user_id, created_at"
     );
 
   let articleIdsVec: string[] | null = null;
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       const { data: vectorData, error: vectorError } = await supabase.rpc(
         "vector_search",
         {
-          query_embedding: embedding, // Pass embedding directly as an array
+          query_embedding: embedding, 
           threshold: 0.1,
           match_limit: 10,
         }
@@ -107,16 +107,16 @@ export async function GET(req: NextRequest) {
 
   // Apply sorting
   switch (sort) {
-    case "alpha_asc":
+    case "asc":
       query = query.order("title", { ascending: true });
       break;
-    case "alpha_desc":
+    case "desc":
       query = query.order("title", { ascending: false });
       break;
-    case "date_asc":
+    case "oldest":
       query = query.order("created_at", { ascending: true });
       break;
-    case "date_desc":
+    case "newest":
     default:
       query = query.order("created_at", { ascending: false });
   }
