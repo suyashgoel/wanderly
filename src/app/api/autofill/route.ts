@@ -3,10 +3,13 @@ import { parseContent } from "@/lib/parseContent";
 import { generateTags } from "@/lib/generateTags";
 import { generateEmbeddings } from "@/lib/generateEmbeddings";
 import { NextRequest, NextResponse } from "next/server";
+import { generateDescription } from "@/lib/generateDescription";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const url = searchParams.get("url");
+  const url = searchParams.get("url"); // url to be processed
+  const city_id = searchParams.get("city_id") // id for city we want post to be a part of
+
 
   if (!url||!/^https?:\/\//.test(url)) {
     return NextResponse.json({ error: "Missing ?url=" }, { status: 400 });
@@ -24,8 +27,8 @@ export async function GET(req: NextRequest) {
           image: "",
           primary_tags: [],
           secondary_tags: [],
-          embedding: null,
-          missing: true
+          description: "",
+          city_id
         },
         { status: 200 }
       );
@@ -39,27 +42,22 @@ export async function GET(req: NextRequest) {
 
     let primary_tags: string[] = [];
     let secondary_tags: string[] = [];
+    let description: string = "";
+
 
     if (text.trim()) {
       const tagsResult = await generateTags(
+        `Article Title: ${title}\nArticle Text: ${text.substring(0, 4000)}`
+      );
+      const descriptionResult = await generateDescription(
         `Article Title: ${title}\nArticle Text: ${text}`
       );
-      if (tagsResult.success) {
+      if (tagsResult.success && descriptionResult.success) {
         primary_tags = tagsResult.primary_tags;
         secondary_tags = tagsResult.secondary_tags;
+        description = descriptionResult.description;
       } else {
         console.warn("Tagging failed:", tagsResult.error);
-      }
-    }
-
-    let embedding = null;
-    if (text.trim()) {
-      try {
-        embedding = await generateEmbeddings(
-          `${title}\n${text.substring(0, 1500)}`
-        );
-      } catch (error) {
-        console.warn("Embedding generation failed:", error);
       }
     }
 
@@ -70,8 +68,8 @@ export async function GET(req: NextRequest) {
         image,
         primary_tags,
         secondary_tags,
-        embedding,
-        missing: false
+        description,
+        city_id
       },
       { status: 200 }
     );

@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 export async function GET(req: NextRequest) {
     const supabase = createClient();
 
-    const { data: articles, error } = await supabase.from('cities').select('*');
+    const { data: cities, error } = await supabase.from('cities').select('*');
 
     if (error) {
         return NextResponse.json(
@@ -12,5 +12,5 @@ export async function GET(req: NextRequest) {
             { status: 500 }
           );
     }
-    return NextResponse.json(articles, { status: 200 });
+    return NextResponse.json(cities, { status: 200 });
 }
