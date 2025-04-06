@@ -40,8 +40,48 @@ export function SubmitArticleCard({
   const city_id = _city_id;
 
   const handleSubmit = async () => {
-    console.log("To do:");
+    if (!title || !url || !description || tags.length === 0 || !city_id) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+  
+    try {
+      const queryParams = new URLSearchParams({
+        url,
+        title,
+        image_url: image,
+        description,
+        city_id,
+        user_id: "219bdad1-763e-4d11-a584-eafadefcb30d", 
+        tags: tags.join(","),
+      });
+  
+      const res = await fetch(`/api/submit?${queryParams.toString()}`, {
+        method: "POST",
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        console.error("Error posting article:", data.error || data);
+        alert("Something went wrong!");
+        return;
+      }
+  
+      console.log("Article posted!", data);
+      alert("Article submitted successfully!");
+  
+      setUrl("");
+      setTitle("");
+      setDescription("");
+      setTags([]);
+      setCurrTag("");
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("Unexpected error submitting article.");
+    }
   };
+  
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && currTag.trim() !== "") {

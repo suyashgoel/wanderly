@@ -61,7 +61,7 @@ export function ArticleCard({ article }: { article: Article }) {
            {article.description}
          </p>
          <div className="flex flex-wrap gap-2">
-           {article.secondary_tags.map((tag, i) => (
+           {article.tags.map((tag, i) => (
              <span
                key={i}
                className="text-xs font-semibold text-white px-2 py-1 rounded-full bg-gradient-to-r from-[#0077FF] to-[#7B61FF] shadow-md"

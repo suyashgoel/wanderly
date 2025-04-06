@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   let query = supabase
     .from("articles")
     .select(
-      "id, url, title, image_url, description, secondary_tags, city_id, user_id, created_at"
+      "id, url, title, image_url, description, tags, city_id, user_id, created_at"
     );
 
   let articleIdsVec: string[] | null = null;
