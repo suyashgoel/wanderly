@@ -22,6 +22,7 @@ export function SubmitArticleCard({
   _tags,
   _description,
   _city_id,
+  onClose
 }: {
   _url?: string;
   _title?: string;
@@ -29,6 +30,7 @@ export function SubmitArticleCard({
   _tags?: string[];
   _description?: string;
   _city_id: string;
+  onClose: () => void;
 }) {
   const [url, setUrl] = useState(_url || "");
   const [title, setTitle] = useState(_title || "");
@@ -69,6 +71,9 @@ export function SubmitArticleCard({
       }
   
       console.log("Article posted!", data);
+
+      onClose();
+
       alert("Article submitted successfully!");
   
       setUrl("");

@@ -31,6 +31,7 @@ export type AutofillData = {
 };
 
 export function AutofillCard() {
+  const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
   const [city, setCity] = useState("");
   const [cities, setCities] = useState([]);
@@ -63,12 +64,18 @@ export function AutofillCard() {
         return;
       }
 
-      setData(result); // ✅ Save autofill data
-      setSuccess(true); // ✅ Show next step (conditionally)
+      setData(result);
+      setSuccess(true);
     } catch (err) {
       console.error("Fetch error:", err);
     }
   };
+
+  useEffect(() => {
+    setSuccess(false);
+    setUrl("");
+    setCity("");
+  }, [open]);
 
   useEffect(() => {
     async function fetchCities() {
@@ -93,7 +100,7 @@ export function AutofillCard() {
 
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
             size="icon"
@@ -151,6 +158,9 @@ export function AutofillCard() {
             _description={data.description}
             _image={data.image}
             _tags={[...data.primary_tags, ...data.secondary_tags]}
+            onClose={() => {
+              setOpen(false);
+            }}
           />
         )}
       </Dialog>

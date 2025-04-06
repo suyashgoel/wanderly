@@ -15,7 +15,7 @@ export function ArticleCard({ article }: { article: Article }) {
   const [validImage, setValidImage] = useState(true);
 
   useEffect(() => {
-    setValidImage(true); // Reset when article changes
+    setValidImage(true);
   }, [article.image_url]);
 
   return (
@@ -43,7 +43,7 @@ export function ArticleCard({ article }: { article: Article }) {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="max-w-lg p-6 rounded-2xl shadow-xl bg-white dark:bg-[#222529] transition-colors">
+      <DialogContent className="max-w-lg p-6 rounded-2xl shadow-xl bg-white dark:bg-[#222529] transition-colors flex flex-col">
          <DialogHeader>
            <DialogTitle className="text-2xl font-bold font-inter text-[#0077FF] dark:text-[#7B61FF]">
              {article.title}
@@ -53,7 +53,7 @@ export function ArticleCard({ article }: { article: Article }) {
            href={article.url}
            target="_blank"
            rel="noopener noreferrer"
-           className="text-sm underline font-medium text-[#0077FF] dark:text-[#FF7A00] mb-3 block"
+           className="text-sm font-inter underline font-medium text-[#0077FF] dark:text-[#FF7A00] mb-3 block break-words"
          >
            {article.url}
          </a>

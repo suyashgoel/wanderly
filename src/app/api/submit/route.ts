@@ -60,6 +60,31 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const allTags = new Set<string>(["food", "nightlife", "transportation", "activities", "sightseeing","nature","shopping", "accommodation", "culture", "history", "tips"]);
+
+  for (const item of tags) {
+    if (!allTags.has(item)) {
+        break;
+    }
+    
+    const { data: tag, error: tag_error } = await supabase.from('tags').select('*').eq("name", item).single();
+
+    if (tag_error) {
+        break;
+    }
+
+    const { data: article_tag, error: join_error } =  await supabase
+    .from("article_tags")
+    .insert([
+      {
+        article_id: article.id, 
+        tag_id: tag.id
+      },
+    ])
+    .select()
+    .single();
+  }
+
   return NextResponse.json(
     { message: "Article posted!", article },
     { status: 201 }
